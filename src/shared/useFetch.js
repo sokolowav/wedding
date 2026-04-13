@@ -5,7 +5,7 @@ export const useFetch = () => {
     },
   }
 
-  const url = '/api/records'
+  const url = 'http://localhost:8080/api/records'
 
   return {
     get(id) {

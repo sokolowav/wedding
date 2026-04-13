@@ -30,7 +30,7 @@ import { useWords } from '../shared/useWords'
 const props = defineProps(['guest'])
 const words = useWords(props.guest?.gender)
 
-const colors = ['#000000']
+const colors = ['#000000', '#500000', '#a40000', '#dc0000']
 
 const getShadow = (hex: string) => {
   return `5px 5px 20px ${hex}`
@@ -51,6 +51,10 @@ const getShadow = (hex: string) => {
   justify-content: center;
   flex-wrap: wrap;
   gap: 30px;
+
+  @media (max-width: 480px) {
+    gap: 15px;
+  }
 }
 
 .color {

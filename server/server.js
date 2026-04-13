@@ -5,7 +5,7 @@ const initRecords = require('./createRecords')
 
 const app = express()
 
-app.set('port', 80)
+app.set('port', 8080)
 
 mongoose
   .connect('mongodb://localhost:27017/guests')
