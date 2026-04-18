@@ -1,7 +1,7 @@
 <template>
   <div class="section hello-screen">
     <div class="image-wrapper">
-      <img class="image-1" src="../images/1.png" alt="1" />
+      <img class="image-1" src="../images/2.webp" alt="pic" />
     </div>
     <div class="names">
       <template v-for="(name, i) in names" :key="name">
@@ -39,9 +39,9 @@
 import { format } from 'date-fns'
 import { ref, Ref } from 'vue'
 
-const names: Ref<string[]> = ref(['Анастасия', 'Андрей'])
+const names: Ref<string[]> = ref(['Мария', 'Владимир'])
 
-const date = new Date('2024-12-04T15:00:00')
+const date = new Date('2026-06-16T17:30:00')
 const dateFormated = format(date, 'dd.MM.yyyy')
 const timeRemaining = date.getTime() - new Date().getTime()
 

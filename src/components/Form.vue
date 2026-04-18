@@ -2,7 +2,8 @@
   <div class="section-form">
     <template v-if="isRenderedForm">
       <div class="text-guest mb-2" data-aos="fade-up">
-        Просим {{ words.you[0] }} ответить на несколько вопросов до 15 ноября.<br />
+        Просим {{ words.you[0] }} ответить на несколько вопросов до такого-то
+        числа.<br />
         Это поможет нам в организации торжества.
       </div>
 
@@ -33,7 +34,9 @@
       </div>
 
       <template v-if="canBe">
-        <h2 class="text-center" data-aos="fade-up">Предпочтения по горячему:</h2>
+        <h2 class="text-center" data-aos="fade-up">
+          Предпочтения по горячему:
+        </h2>
 
         <div class="list-wrapper" data-aos="fade-up">
           <div class="list">
@@ -57,7 +60,9 @@
           </div>
         </div>
 
-        <h2 class="text-center" data-aos="fade-up">Предпочтения по напиткам:</h2>
+        <h2 class="text-center" data-aos="fade-up">
+          Предпочтения по напиткам:
+        </h2>
 
         <div class="list-wrapper mb-4" data-aos="fade-up">
           <div class="list">
@@ -161,7 +166,7 @@ const syncDataWithProps = () => {
   if (props.guest?.hasAnswered) {
     hasAnswered.value = props.guest.hasAnswered
   }
-  
+
   if (props.guest?.comment) {
     comment.value = props.guest.comment
   }
@@ -258,7 +263,7 @@ const isCheckedPresenceOption = (option) => {
 }
 
 const isCheckedFoodOption = (option) => {
-  return food.value.some(f => f.id === option.id)
+  return food.value.some((f) => f.id === option.id)
 }
 
 watchEffect(() => {

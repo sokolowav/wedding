@@ -1,7 +1,7 @@
 <template>
   <div class="section-map">
     <div class="addresses">
-      <div class="address">
+      <!-- <div class="address">
         <img
           class="address__img"
           src="/src/images/timing.svg"
@@ -13,19 +13,19 @@
           <div>Дворец бракосочетания</div>
           <div class="fs-20">Английская наб., 28</div>
         </div>
-      </div>
+      </div> -->
 
       <div class="address">
         <img
           class="address__img"
           src="/src/images/martini.svg"
-          alt="palace"
+          alt="Paris-Holl"
           data-aos="fade-right"
         />
 
         <div class="address__name" data-aos="fade-left">
-          <div>Ресторан "Весенний"</div>
-          <div class="fs-20">просп. Римского-Корсакова, 83-85</div>
+          <div>Ресторан "Париж Холл"</div>
+          <div class="fs-20">ул. Якоби, 35</div>
         </div>
       </div>
     </div>
@@ -38,42 +38,42 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import iconTimingMap from '/src/images/timing-map.svg'
+// import iconTimingMap from '/src/images/timing-map.svg'
 import iconMartiniMap from '/src/images/martini-map.svg'
 
 const init = () => {
   ymaps.ready(() => {
     const map = new ymaps.Map('map', {
-      center: [59.925979, 30.293102],
+      center: [52.222758, 104.326591],
       controls: [],
-      zoom: 14,
+      zoom: 15,
     })
 
-    const palace = new ymaps.Placemark(
-      [59.934014, 30.293828],
-      {},
-      {
-        iconLayout: 'default#image',
-        // Своё изображение иконки метки.
-        iconImageHref: iconTimingMap,
-        // Размеры метки.
-        iconImageSize: [60, 60],
-      },
-    )
+    // const palace = new ymaps.Placemark(
+    //   [59.934014, 30.293828],
+    //   {},
+    //   {
+    //     iconLayout: 'default#image',
+    //     // Своё изображение иконки метки.
+    //     iconImageHref: iconTimingMap,
+    //     // Размеры метки.
+    //     iconImageSize: [60, 60],
+    //   },
+    // )
 
     const banket = new ymaps.Placemark(
-      [59.920118, 30.284796],
+      [52.222758, 104.326591],
       {},
       {
         iconLayout: 'default#image',
         // Своё изображение иконки метки.
         iconImageHref: iconMartiniMap,
         // Размеры метки.
-        iconImageSize: [60, 60],
+        iconImageSize: [40, 40],
       },
     )
 
-    map.geoObjects.add(palace).add(banket)
+    map.geoObjects.add(banket)
   })
 }
 

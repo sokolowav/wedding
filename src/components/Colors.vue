@@ -17,9 +17,9 @@
         ></div>
       </div>
 
-      <div class="text-guest" v-if="props.guest?.gender !== 'she'">
+      <!-- <div class="text-guest" v-if="props.guest?.gender !== 'she'">
         Молодым людям допускается черный низ и белый верх
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

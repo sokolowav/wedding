@@ -4,53 +4,73 @@
       <div class="form">
         <div class="form-input">
           <div class="form-input__label">Имя</div>
-          <input v-model="form.name"/>
+          <input v-model="form.name" />
         </div>
-        
+
         <div class="form-input">
           <div class="form-input__label">Как обращаться?</div>
-          <input v-model="form.gender"/> he, she, they
+          <input v-model="form.gender" /> he, she, they
         </div>
 
         <div class="form-input">
           <div class="form-input__label">Внутреннее наименование</div>
-          <input v-model="form.alias"/>
+          <input v-model="form.alias" />
         </div>
       </div>
 
-      <button class="btn mb-4" @click="onClickCreateBtn" :disabled="isLoadingAdmin">
+      <button
+        class="btn mb-4"
+        @click="onClickCreateBtn"
+        :disabled="isLoadingAdmin"
+      >
         <img
           class="btn-loader"
           :class="{ visible: isLoadingAdmin }"
           src="./images/btn-loader.svg"
           alt="loader"
         />
-        <span class="btn-text" :class="{ visible: !isLoadingAdmin }">Создать</span>
+        <span class="btn-text" :class="{ visible: !isLoadingAdmin }"
+          >Создать</span
+        >
       </button>
 
       <hr class="mb-4" />
 
-      <button class="btn mb-4" @click="onClickGetAllBtn" :disabled="isLoadingAdmin">
+      <button
+        class="btn mb-4"
+        @click="onClickGetAllBtn"
+        :disabled="isLoadingAdmin"
+      >
         <img
           class="btn-loader"
           :class="{ visible: isLoadingAdmin }"
           src="./images/btn-loader.svg"
           alt="loader"
         />
-        <span class="btn-text" :class="{ visible: !isLoadingAdmin }">Получить</span>
+        <span class="btn-text" :class="{ visible: !isLoadingAdmin }"
+          >Получить</span
+        >
       </button>
 
       <div class="guest-list mb-4">
-        <div v-for="guest in guests" :key="guest.uuid" class="guest-list-item mb-4">
+        <div
+          v-for="guest in guests"
+          :key="guest.uuid"
+          class="guest-list-item mb-4"
+        >
           <div class="guest-list-item__row-name">
             <div class="guest-list-item__name">Имя: {{ guest.name }}</div>
-            <div class="guest-list-item__name">Внутреннее имя: {{ guest.alias }}</div>
+            <div class="guest-list-item__name">
+              Внутреннее имя: {{ guest.alias }}
+            </div>
           </div>
 
           <div class="guest-list-item__url">{{ getUrl(guest) }}</div>
 
           <div class="guest-list-item__row-answer">
-            <div v-if="guest.hasAnswered">Ответил: {{ getDateTime(guest.timeAnswered) }}</div>
+            <div v-if="guest.hasAnswered">
+              Ответил: {{ getDateTime(guest.timeAnswered) }}
+            </div>
             <div v-else>Пока не ответил</div>
           </div>
 
@@ -68,7 +88,10 @@
 
           <div class="guest-list-item__list">
             Напитки:
-            <div class="guest-list-item__list--item" v-for="drink in guest.drinks">
+            <div
+              class="guest-list-item__list--item"
+              v-for="drink in guest.drinks"
+            >
               {{ getDrinkName(drink) }}
             </div>
           </div>
@@ -77,8 +100,14 @@
             Комментарий: {{ guest.comment }}
           </div>
 
-          <button class="btn" @click="onClickDeleteBtn(guest)" :disabled="isLoading">
-            <span class="btn-text" :class="{ visible: !isLoading }">Удалить</span>
+          <button
+            class="btn"
+            @click="onClickDeleteBtn(guest)"
+            :disabled="isLoading"
+          >
+            <span class="btn-text" :class="{ visible: !isLoading }"
+              >Удалить</span
+            >
           </button>
 
           <div v-if="isPromtVisible(guest)">
@@ -132,8 +161,7 @@
       <Map />
     </div>
 
-    <div style="display: none;" @click="adminModeEnabled = true">
-    </div>
+    <div style="display: none" @click="adminModeEnabled = true"></div>
   </template>
 </template>
 
@@ -217,35 +245,35 @@ const guestsCountNotAnswered = computed(() => {
 })
 
 const guestsCountFish = computed(() => {
-  return filterGuests((guest) => guest.food.some(f => f.id === 2))
+  return filterGuests((guest) => guest.food.some((f) => f.id === 2))
 })
 
 const guestsCountBeef = computed(() => {
-  return filterGuests((guest) => guest.food.some(f => f.id === 1))
+  return filterGuests((guest) => guest.food.some((f) => f.id === 1))
 })
 
 const guestsCountRedWine = computed(() => {
-  return filterGuests((guest) => guest.drinks.some(d => d.id === 1))
+  return filterGuests((guest) => guest.drinks.some((d) => d.id === 1))
 })
 
 const guestsCountWhiteWine = computed(() => {
-  return filterGuests((guest) => guest.drinks.some(d => d.id === 2))
+  return filterGuests((guest) => guest.drinks.some((d) => d.id === 2))
 })
 
 const guestsCountChampagne = computed(() => {
-  return filterGuests((guest) => guest.drinks.some(d => d.id === 3))
+  return filterGuests((guest) => guest.drinks.some((d) => d.id === 3))
 })
 
 const guestsCountCognac = computed(() => {
-  return filterGuests((guest) => guest.drinks.some(d => d.id === 4))
+  return filterGuests((guest) => guest.drinks.some((d) => d.id === 4))
 })
 
 const guestsCountWhiskey = computed(() => {
-  return filterGuests((guest) => guest.drinks.some(d => d.id === 5))
+  return filterGuests((guest) => guest.drinks.some((d) => d.id === 5))
 })
 
 const guestsCountVodka = computed(() => {
-  return filterGuests((guest) => guest.drinks.some(d => d.id === 6))
+  return filterGuests((guest) => guest.drinks.some((d) => d.id === 6))
 })
 
 const init = async () => {
@@ -279,7 +307,7 @@ const onClickGetAllBtn = async () => {
   try {
     const response = await request.get()
     guests.value = response
-  } catch(error) {
+  } catch (error) {
     throw error
   } finally {
     isLoading.value = false
@@ -295,7 +323,7 @@ const onClickCreateBtn = async () => {
     if (response.state === 'success') {
       await onClickGetAllBtn()
     }
-  } catch(error) {
+  } catch (error) {
     throw error
   } finally {
     isLoading.value = false
@@ -303,10 +331,10 @@ const onClickCreateBtn = async () => {
 }
 
 const onClickDeleteBtn = async (guest) => {
-  const isPromtActive = deletePrompts.value.some(i => i === guest.uuid)
+  const isPromtActive = deletePrompts.value.some((i) => i === guest.uuid)
 
   if (isPromtActive) {
-    deletePrompts.value = deletePrompts.value.filter(i => i !== guest.uuid)
+    deletePrompts.value = deletePrompts.value.filter((i) => i !== guest.uuid)
   } else {
     deletePrompts.value.push(guest.uuid)
   }
@@ -321,7 +349,7 @@ const onClickRemoveBtn = async (guest) => {
     if (response.state === 'deleted') {
       await onClickGetAllBtn()
     }
-  } catch(error) {
+  } catch (error) {
     throw error
   } finally {
     isLoading.value = false
@@ -329,7 +357,7 @@ const onClickRemoveBtn = async (guest) => {
 }
 
 const isPromtVisible = (guest) => {
-  return deletePrompts.value.some(i => i === guest.uuid)
+  return deletePrompts.value.some((i) => i === guest.uuid)
 }
 
 const getUrl = (guest) => {
@@ -341,11 +369,11 @@ const getDateTime = (date) => {
 }
 
 const getFoodName = (food) => {
-  return foods.find(f => f.id === food.id).name
+  return foods.find((f) => f.id === food.id).name
 }
 
 const getDrinkName = (drink) => {
-  return drinks.find(d => d.id === drink.id).name
+  return drinks.find((d) => d.id === drink.id).name
 }
 
 init()
@@ -418,7 +446,7 @@ hr {
       background-color: green;
       border-radius: 5px;
     }
-    
+
     .red {
       display: inline-block;
       padding: 10px 15px;
