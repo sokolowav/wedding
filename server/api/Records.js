@@ -12,8 +12,6 @@ router.post('/', async (req, res) => {
     ...req.body,
     uuid: uuidv4(),
     presence: null,
-    food: [],
-    drinks: [],
     comment: '',
     hasAnswered: false,
     timeAnswered: '',

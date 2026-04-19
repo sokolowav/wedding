@@ -34,54 +34,32 @@
       </div>
 
       <template v-if="canBe">
-        <h2 class="text-center" data-aos="fade-up">
-          Предпочтения по горячему:
-        </h2>
-
-        <div class="list-wrapper" data-aos="fade-up">
+        <div class="list-wrapper mb-4" data-aos="fade-up">
+          <h2 class="text-center" data-aos="fade-up">Будет ли с Тобой +1?</h2>
           <div class="list">
             <label
-              v-for="foodOption in foodOptions"
-              :key="foodOption.id"
+              v-for="plusOneOption in plusOneOptions"
+              :key="plusOneOption.id"
               class="list__item"
             >
               <input
-                type="checkbox"
-                name="food"
-                :value="foodOption.id"
-                :checked="isCheckedFoodOption(foodOption)"
-                @input="onInputFood"
+                type="radio"
+                name="plusOne"
+                :value="plusOneOption.value"
+                :checked="isCheckedPlusOneOption(plusOneOption)"
+                @input="onInputPlusOne"
               />
 
               <div class="checkbox"></div>
 
-              {{ foodOption.name }}
-            </label>
-          </div>
-        </div>
-
-        <h2 class="text-center" data-aos="fade-up">
-          Предпочтения по напиткам:
-        </h2>
-
-        <div class="list-wrapper mb-4" data-aos="fade-up">
-          <div class="list">
-            <label v-for="drink in drinks" :key="drink.id" class="list__item">
-              <input
-                type="checkbox"
-                :checked="drink.isChecked"
-                @input="(event) => onChangeDrink(drink.id, event)"
-              />
-
-              <div class="checkbox"></div>
-
-              {{ drink.name }}
+              {{ plusOneOption.name }}
             </label>
           </div>
 
-          <div class="label" data-aos="fade-up">Другое:</div>
-
-          <div class="input-wrapper" data-aos="fade-up">
+          <h2 class="text-center" data-aos="fade-up">
+            Что-нибудь ещё, что мы должны учесть?
+          </h2>
+          <div class="input-wrapper">
             <input type="text" v-model="comment" class="input" />
           </div>
         </div>
@@ -117,8 +95,6 @@ import { useFetch } from '../shared/useFetch'
 import { isNil } from 'lodash'
 
 import { useWords } from '../shared/useWords'
-import { useDrinks } from '../shared/useDrinks'
-import { useFoods } from '../shared/useFoods'
 
 const props = defineProps(['guest'])
 
@@ -142,16 +118,23 @@ const presenceOptions = [
   },
 ]
 
-const foodOptions = useFoods()
-
-const food: Ref<any[]> = ref([])
+const plusOneOptions = [
+  {
+    id: 1,
+    name: 'Да',
+    value: true,
+  },
+  {
+    id: 2,
+    name: 'Нет',
+    value: false,
+  },
+]
 
 const presence: Ref<null | boolean> = ref(null)
+const plusOne: Ref<null | boolean> = ref(null)
 
 const hasAnswered: Ref<boolean> = ref(false)
-
-const drinks = ref(useDrinks())
-
 const comment = ref('')
 
 const canBe = computed(() => {
@@ -167,53 +150,36 @@ const syncDataWithProps = () => {
     hasAnswered.value = props.guest.hasAnswered
   }
 
-  if (props.guest?.comment) {
-    comment.value = props.guest.comment
-  }
-
-  if (props.guest?.food) {
-    food.value = props.guest.food
+  if (props.guest?.presence === true) {
+    comment.value = props.guest?.comment ?? ''
+  } else {
+    comment.value = ''
   }
 
   if (!isNil(props.guest?.presence)) {
     presence.value = props.guest.presence
   }
 
-  if (props.guest?.drinks) {
-    drinks.value.forEach((drink) => {
-      const drinkFound = props.guest.drinks.find((dr) => drink.id === dr.id)
-
-      drink.isChecked = drinkFound ?? false
-    })
-  }
-}
-
-const onChangeDrink = (id, event) => {
-  const drink = drinks.value.find((drinks) => drinks.id === id)
-
-  if (drink) {
-    drink.isChecked = event.target.checked
+  if (
+    props.guest?.presence === true &&
+    typeof props.guest?.plusOne === 'boolean'
+  ) {
+    plusOne.value = props.guest.plusOne
+  } else {
+    plusOne.value = null
   }
 }
 
 const onInputPresence = (event) => {
   presence.value = event.target.value === 'true' ? true : false
+
+  if (presence.value === false) {
+    comment.value = ''
+  }
 }
 
-const onInputFood = (event) => {
-  const foodFound = foodOptions.find((f) => {
-    return Number(event.target.value) === f.id
-  })
-
-  if (!!foodFound) {
-    if (event.target.checked) {
-      food.value.push(foodFound)
-    } else {
-      food.value = food.value.filter(
-        (f) => Number(f.id) !== Number(foodFound.id),
-      )
-    }
-  }
+const onInputPlusOne = (event) => {
+  plusOne.value = event.target.value === 'true' ? true : false
 }
 
 const onClickBtn = async () => {
@@ -223,28 +189,33 @@ const onClickBtn = async () => {
     return
   }
 
+  if (canBe.value && plusOne.value === null) {
+    toast('Будет ли с вами +1?')
+
+    return
+  }
+
   isLoading.value = true
 
   try {
     const guestUuid = props.guest?.uuid
 
-    await request.put(guestUuid, {
+    const payload = {
       ...props.guest,
-      drinks: drinks.value
-        .map((drink) => {
-          if (drink.isChecked) {
-            return {
-              id: drink.id,
-            }
-          }
-
-          return null
-        })
-        .filter(Boolean),
-      comment: comment.value,
       presence: presence.value,
-      food: food.value.map((i) => ({ id: i.id })),
-    })
+      comment: canBe.value ? comment.value : '',
+    }
+
+    delete payload.food
+    delete payload.drinks
+
+    if (canBe.value) {
+      payload.plusOne = plusOne.value
+    } else {
+      delete payload.plusOne
+    }
+
+    await request.put(guestUuid, payload)
 
     hasAnswered.value = true
 
@@ -262,8 +233,8 @@ const isCheckedPresenceOption = (option) => {
   return presence.value === option.value
 }
 
-const isCheckedFoodOption = (option) => {
-  return food.value.some((f) => f.id === option.id)
+const isCheckedPlusOneOption = (option) => {
+  return plusOne.value === option.value
 }
 
 watchEffect(() => {
@@ -334,7 +305,6 @@ syncDataWithProps()
   }
 }
 
-input[type='checkbox'],
 input[type='radio'] {
   display: none;
 
@@ -365,7 +335,7 @@ input[type='radio'] {
   &-wrapper {
     margin-top: auto;
     padding: 20px 0;
-    height: 70px;
+    min-height: 70px;
   }
 
   &[disabled='true'] {

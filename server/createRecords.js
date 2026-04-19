@@ -3,46 +3,14 @@ const { v4: uuidv4 } = require('uuid')
 
 const testGuests = [
   {
-    name: 'Андрей',
-    gender: 'he',
-    drinks: [
-      {
-        id: 3,
-      },
-      {
-        id: 4,
-      },
-    ],
-    comment: 'Хочу еще пива нефильтрованного',
-    presence: true,
-  },
-  {
-    name: 'Настя',
+    name: 'Мария',
     gender: 'she',
-    drinks: [
-      {
-        id: 1,
-      },
-      {
-        id: 2,
-      },
-    ],
-    comment: 'Ем людей в костюме котлеты',
     presence: true,
   },
   {
-    name: 'Кто-то и кто-то',
-    gender: 'they',
-    drinks: [
-      {
-        id: 5,
-      },
-      {
-        id: 7,
-      },
-    ],
-    comment: '',
-    presence: false,
+    name: 'Владимир',
+    gender: 'he',
+    presence: true,
   },
 ]
 

@@ -79,25 +79,15 @@
             <span v-else class="red">Не будет</span>
           </div>
 
-          <div class="guest-list-item__list">
-            Еда:
-            <div class="guest-list-item__list--item" v-for="food in guest.food">
-              {{ getFoodName(food) }}
-            </div>
+          <div v-if="guest.presence" class="guest-list-item__plus-one">
+            +1:
+            <span v-if="guest.plusOne === true" class="green">Да</span>
+            <span v-else-if="guest.plusOne === false" class="red">Нет</span>
+            <span v-else class="guest-list-item__muted">Не указано</span>
           </div>
 
-          <div class="guest-list-item__list">
-            Напитки:
-            <div
-              class="guest-list-item__list--item"
-              v-for="drink in guest.drinks"
-            >
-              {{ getDrinkName(drink) }}
-            </div>
-          </div>
-
-          <div class="guest-list-item__comment">
-            Комментарий: {{ guest.comment }}
+          <div v-if="guest.presence" class="guest-list-item__comment">
+            Комментарий: {{ guest.comment || '—' }}
           </div>
 
           <button
@@ -118,18 +108,17 @@
       </div>
 
       <div>
-        <div>Общее количество гостей: {{ guestsCount }}</div>
-        <div>Количество пристутствующий: {{ guestsCountWillBe }}</div>
-        <div>Количество тех кто не сможет: {{ guestsCountWillNotBe }}</div>
-        <div>Количество не ответивших: {{ guestsCountNotAnswered }}</div>
-        <div>Рыба: {{ guestsCountFish }}</div>
-        <div>Мясо: {{ guestsCountBeef }}</div>
-        <div>Красное вино: {{ guestsCountRedWine }}</div>
-        <div>Белое вино: {{ guestsCountWhiteWine }}</div>
-        <div>Игристое: {{ guestsCountChampagne }}</div>
-        <div>Коньяк: {{ guestsCountCognac }}</div>
-        <div>Виски: {{ guestsCountWhiskey }}</div>
-        <div>Водка: {{ guestsCountVodka }}</div>
+        <div>Общее количество приглашенных: {{ guestsCount }}</div>
+        <div>Те, кто сможет: {{ guestsCountWillBe }}</div>
+        <div>+1: {{ guestsCountWithPlusOne }}</div>
+        <div>Те, кто НЕ сможет: {{ guestsCountWillNotBe }}</div>
+        <div>Те, кто не ответил: {{ guestsCountNotAnswered }}</div>
+        <div>
+          <b>
+            Количество подтвержденных гостей итого:
+            {{ guestsCountWillBe + guestsCountWithPlusOne }}
+          </b>
+        </div>
       </div>
     </div>
   </div>
@@ -178,15 +167,13 @@ import AOS from 'aos'
 import { ref, Ref, computed, onMounted } from 'vue'
 import { useFetch } from './shared/useFetch'
 import { getTime } from './shared/getTime'
-import { useFoods } from './shared/useFoods'
-import { useDrinks } from './shared/useDrinks'
 
 interface IGuest {
   name: string
   gender: string
-  drinks: Object[]
-  comment: string
+  comment?: string
   presence: boolean
+  plusOne?: boolean
   uuid: string
   hasAnswered: boolean
 }
@@ -206,9 +193,6 @@ const guest: Ref<IGuest | null> = ref(null)
 const animationEnded = ref(false)
 const fadeOutEnded = ref(false)
 const adminModeEnabled = ref(false)
-
-const foods = useFoods()
-const drinks = useDrinks()
 
 const deletePrompts: Ref<any[]> = ref([])
 
@@ -236,44 +220,18 @@ const guestsCountWillBe = computed(() => {
   return filterGuests((guest) => guest.presence === true)
 })
 
+const guestsCountWithPlusOne = computed(() => {
+  return filterGuests(
+    (guest) => guest.presence === true && guest.plusOne === true,
+  )
+})
+
 const guestsCountWillNotBe = computed(() => {
   return filterGuests((guest) => guest.presence === false)
 })
 
 const guestsCountNotAnswered = computed(() => {
   return filterGuests((guest) => !guest.hasAnswered)
-})
-
-const guestsCountFish = computed(() => {
-  return filterGuests((guest) => guest.food.some((f) => f.id === 2))
-})
-
-const guestsCountBeef = computed(() => {
-  return filterGuests((guest) => guest.food.some((f) => f.id === 1))
-})
-
-const guestsCountRedWine = computed(() => {
-  return filterGuests((guest) => guest.drinks.some((d) => d.id === 1))
-})
-
-const guestsCountWhiteWine = computed(() => {
-  return filterGuests((guest) => guest.drinks.some((d) => d.id === 2))
-})
-
-const guestsCountChampagne = computed(() => {
-  return filterGuests((guest) => guest.drinks.some((d) => d.id === 3))
-})
-
-const guestsCountCognac = computed(() => {
-  return filterGuests((guest) => guest.drinks.some((d) => d.id === 4))
-})
-
-const guestsCountWhiskey = computed(() => {
-  return filterGuests((guest) => guest.drinks.some((d) => d.id === 5))
-})
-
-const guestsCountVodka = computed(() => {
-  return filterGuests((guest) => guest.drinks.some((d) => d.id === 6))
 })
 
 const init = async () => {
@@ -368,14 +326,6 @@ const getDateTime = (date) => {
   return getTime(date)
 }
 
-const getFoodName = (food) => {
-  return foods.find((f) => f.id === food.id).name
-}
-
-const getDrinkName = (drink) => {
-  return drinks.find((d) => d.id === drink.id).name
-}
-
 init()
 
 onMounted(() => {
@@ -435,7 +385,8 @@ hr {
     margin-bottom: 1rem;
   }
 
-  &__presence {
+  &__presence,
+  &__plus-one {
     margin-bottom: 1rem;
 
     .green {
@@ -457,13 +408,13 @@ hr {
     }
   }
 
-  &__list {
-    margin-bottom: 3rem;
+  &__muted {
+    color: #777777;
+  }
 
-    &--item {
-      padding-left: 2rem;
-      margin-bottom: 1rem;
-    }
+  &__comment {
+    margin-bottom: 1rem;
+    word-break: break-word;
   }
 }
 </style>

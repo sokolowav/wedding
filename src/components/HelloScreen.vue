@@ -6,7 +6,7 @@
     <div class="names">
       <template v-for="(name, i) in names" :key="name">
         <div class="name">{{ name }}</div>
-        <div v-if="!isLastName(i)" class="fs-20">И</div>
+        <div v-if="!isLastName(i)" class="fs-20">&</div>
       </template>
     </div>
 
@@ -75,10 +75,14 @@ const isLastName = (index: number) => {
 .date {
   font-size: 30px;
   margin-top: auto;
+
+  @media (max-width: 480px) {
+    font-size: 25px;
+  }
 }
 
-.fs-20 {
-  font-size: 20px;
+.fs-30 {
+  font-size: 30px;
 }
 
 .image-wrapper {
@@ -98,6 +102,10 @@ const isLastName = (index: number) => {
   font-size: 30px;
   margin-bottom: 1rem;
   padding: 0 15px;
+
+  @media (max-width: 480px) {
+    font-size: 25px;
+  }
 
   &-wrapper {
     display: flex;

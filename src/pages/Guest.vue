@@ -43,9 +43,9 @@ import { useFetch } from '../shared/useFetch'
 interface IGuest {
   name: string
   gender: string
-  drinks: Object[]
-  comment: string
+  comment?: string
   presence: boolean
+  plusOne?: boolean
   uuid: string
   hasAnswered: boolean
 }

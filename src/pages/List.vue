@@ -66,59 +66,6 @@ const form = ref({
   alias: '',
 })
 
-const test = [
-    {
-        "_id": "6720ff44a92049bbbdb2737c",
-        "name": "Андрей",
-        "gender": "he",
-        "drinks": [
-            {
-                "id": 3
-            },
-            {
-                "id": 4
-            }
-        ],
-        "comment": "Хочу еще пива нефильтрованного",
-        "presence": true,
-        "uuid": "1972e89f-8c5b-404d-bd3f-2755020f235d",
-        "hasAnswered": false,
-        "timeAnswered": "",
-        "__v": 0
-    },
-    {
-        "_id": "6720ff44a92049bbbdb2737d",
-        "name": "Настя",
-        "gender": "she",
-        "drinks": [],
-        "comment": "",
-        "presence": true,
-        "uuid": "f09e98fe-00e3-42c5-8b96-49e23d8f5529",
-        "hasAnswered": false,
-        "timeAnswered": "",
-        "__v": 0
-    },
-    {
-        "_id": "6720ff44a92049bbbdb2737e",
-        "name": "Кто-то и кто-то",
-        "gender": "they",
-        "drinks": [
-            {
-                "id": 5
-            },
-            {
-                "id": 7
-            }
-        ],
-        "comment": "",
-        "presence": false,
-        "uuid": "064f8803-a9de-44bb-8adb-4d8798a3f786",
-        "hasAnswered": false,
-        "timeAnswered": "",
-        "__v": 0
-    }
-]
-
 const onClickGetAllBtn = async () => {
   isLoading.value = true
 

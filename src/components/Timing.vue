@@ -31,33 +31,23 @@
 <script setup lang="ts">
 const timing = [
   {
-    time: '14:30',
-    name: 'Сбор гостей в ЗАГСе',
+    time: '17:30',
+    name: 'Сбор гостей',
   },
 
   {
-    time: '15:00',
-    name: 'Церемония бракосочетания',
+    time: '18:00',
+    name: 'Церемония',
   },
 
   {
-    time: '16:00',
-    name: 'Welcome в ресторане',
-  },
-
-  {
-    time: '16:30',
+    time: '19:00',
     name: 'Банкет',
   },
 
   {
-    time: '20:30',
-    name: 'Тортик :)',
-  },
-
-  {
-    time: '22:00',
-    name: 'Завершение вечера',
+    time: '02:00',
+    name: 'After party ;)',
   },
 ]
 
@@ -88,20 +78,20 @@ const isLastElement = (index: number) => {
     flex: 0 1 50%;
     display: flex;
     justify-content: flex-end;
-    @media (max-width: 768px) {
+    @media (max-width: 480px) {
       flex: 0;
     }
   }
 
   &__text {
     flex: 0 1 50%;
-    @media (max-width: 768px) {
+    @media (max-width: 480px) {
       flex: 1;
       font-size: 27px;
     }
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 480px) {
     font-size: 27px;
   }
 }
@@ -126,7 +116,7 @@ const isLastElement = (index: number) => {
     border-radius: 50%;
     background: var(--divider-color);
 
-    @media (max-width: 768px) {
+    @media (max-width: 480px) {
       left: 45px;
     }
   }
