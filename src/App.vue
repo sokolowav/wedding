@@ -212,6 +212,18 @@ const filterGuests = (condition) => {
   return number
 }
 
+const countPlusOnes = (condition) => {
+  let number = 0
+
+  for (let guest of guests.value) {
+    if (condition(guest)) {
+      number += 1
+    }
+  }
+
+  return number
+}
+
 const guestsCount = computed(() => {
   return filterGuests(() => true)
 })
@@ -221,7 +233,7 @@ const guestsCountWillBe = computed(() => {
 })
 
 const guestsCountWithPlusOne = computed(() => {
-  return filterGuests(
+  return countPlusOnes(
     (guest) => guest.presence === true && guest.plusOne === true,
   )
 })

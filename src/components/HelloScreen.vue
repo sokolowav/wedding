@@ -1,12 +1,12 @@
 <template>
   <div class="section hello-screen">
     <div class="image-wrapper">
-      <img class="image-1" src="../images/2.webp" alt="pic" />
+      <img class="image-1" src="../images/2.png" alt="pic" />
     </div>
     <div class="names">
       <template v-for="(name, i) in names" :key="name">
         <div class="name">{{ name }}</div>
-        <div v-if="!isLastName(i)" class="fs-20">&</div>
+        <div v-if="!isLastName(i)" class="fs-30">&</div>
       </template>
     </div>
 
@@ -60,6 +60,7 @@ const isLastName = (index: number) => {
 
 .image-1 {
   height: 47vh;
+  margin-top: 2rem;
 }
 
 .names {
@@ -83,14 +84,24 @@ const isLastName = (index: number) => {
 
 .fs-30 {
   font-size: 30px;
+  line-height: 1.5rem;
 }
 
 .image-wrapper {
+  // position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   overflow: hidden;
+
+  // &::after {
+  //   content: '';
+  //   position: absolute;
+  //   inset: 0;
+  //   background-color: #d7d0c9;
+  //   pointer-events: none;
+  // }
 }
 
 .countdown {

@@ -2,8 +2,7 @@
   <div class="section-form">
     <template v-if="isRenderedForm">
       <div class="text-guest mb-2" data-aos="fade-up">
-        Просим {{ words.you[0] }} ответить на несколько вопросов до такого-то
-        числа.<br />
+        Просим {{ words.you[0] }} ответить на пару вопросов до первого июня.<br />
         Это поможет нам в организации торжества.
       </div>
 
@@ -35,31 +34,34 @@
 
       <template v-if="canBe">
         <div class="list-wrapper mb-4" data-aos="fade-up">
-          <h2 class="text-center" data-aos="fade-up">Будет ли с Тобой +1?</h2>
-          <div class="list">
-            <label
-              v-for="plusOneOption in plusOneOptions"
-              :key="plusOneOption.id"
-              class="list__item"
-            >
-              <input
-                type="radio"
-                name="plusOne"
-                :value="plusOneOption.value"
-                :checked="isCheckedPlusOneOption(plusOneOption)"
-                @input="onInputPlusOne"
-              />
+            
+          <template v-if='!isTheyGuest'>
+            <h2  class="text-center" data-aos="fade-up">Будет ли с Тобой +1?</h2>
+            <div class="list">
+              <label
+                v-for="plusOneOption in plusOneOptions"
+                :key="plusOneOption.id"
+                class="list__item"
+              >
+                <input
+                  type="radio"
+                  name="plusOne"
+                  :value="plusOneOption.value"
+                  :checked="isCheckedPlusOneOption(plusOneOption)"
+                  @input="onInputPlusOne"
+                />
 
-              <div class="checkbox"></div>
+                <div class="checkbox"></div>
 
-              {{ plusOneOption.name }}
-            </label>
-          </div>
+                {{ plusOneOption.name }}
+              </label>
+            </div>
+          </template>
 
           <h2 class="text-center" data-aos="fade-up">
             Что-нибудь ещё, что мы должны учесть?
           </h2>
-          <div class="input-wrapper">
+          <div class="input-wrapper" data-aos="fade-up">
             <input type="text" v-model="comment" class="input" />
           </div>
         </div>
@@ -108,12 +110,12 @@ const isRenderedForm = computed(() => props.guest !== null)
 const presenceOptions = [
   {
     id: 1,
-    name: 'Смогу',
+    name: 'Конечно же, да!',
     value: true,
   },
   {
     id: 2,
-    name: 'Не смогу',
+    name: 'К сожалению, не получится.',
     value: false,
   },
 ]
@@ -139,6 +141,10 @@ const comment = ref('')
 
 const canBe = computed(() => {
   return presence.value === true
+})
+
+const isTheyGuest = computed(() => {
+  return props.guest?.gender === 'they'
 })
 
 const btnLabel = computed(() => {
@@ -168,6 +174,10 @@ const syncDataWithProps = () => {
   } else {
     plusOne.value = null
   }
+
+  if (props.guest?.gender === 'they' && props.guest?.presence === true) {
+    plusOne.value = false
+  }
 }
 
 const onInputPresence = (event) => {
@@ -175,6 +185,11 @@ const onInputPresence = (event) => {
 
   if (presence.value === false) {
     comment.value = ''
+    plusOne.value = null
+  }
+
+  if (presence.value === true && isTheyGuest.value) {
+    plusOne.value = false
   }
 }
 
@@ -189,7 +204,7 @@ const onClickBtn = async () => {
     return
   }
 
-  if (canBe.value && plusOne.value === null) {
+  if (canBe.value && !isTheyGuest.value && plusOne.value === null) {
     toast('Будет ли с вами +1?')
 
     return
@@ -210,6 +225,10 @@ const onClickBtn = async () => {
     delete payload.drinks
 
     if (canBe.value) {
+      if (isTheyGuest.value) {
+        plusOne.value = false
+      }
+
       payload.plusOne = plusOne.value
     } else {
       delete payload.plusOne

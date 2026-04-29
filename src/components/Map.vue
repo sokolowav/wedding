@@ -1,21 +1,7 @@
 <template>
   <div class="section-map">
     <div class="addresses">
-      <!-- <div class="address">
-        <img
-          class="address__img"
-          src="/src/images/timing.svg"
-          alt="palace"
-          data-aos="fade-right"
-        />
-
-        <div class="address__name" data-aos="fade-left">
-          <div>Дворец бракосочетания</div>
-          <div class="fs-20">Английская наб., 28</div>
-        </div>
-      </div> -->
-
-      <div class="address">
+       <div class="address">
         <img
           class="address__img"
           src="/src/images/martini.svg"
@@ -38,7 +24,6 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-// import iconTimingMap from '/src/images/timing-map.svg'
 import iconMartiniMap from '/src/images/martini-map.svg'
 
 const init = () => {
@@ -46,30 +31,18 @@ const init = () => {
     const map = new ymaps.Map('map', {
       center: [52.222758, 104.326591],
       controls: [],
-      zoom: 15,
+      zoom: 14,
     })
 
-    // const palace = new ymaps.Placemark(
-    //   [59.934014, 30.293828],
-    //   {},
-    //   {
-    //     iconLayout: 'default#image',
-    //     // Своё изображение иконки метки.
-    //     iconImageHref: iconTimingMap,
-    //     // Размеры метки.
-    //     iconImageSize: [60, 60],
-    //   },
-    // )
 
     const banket = new ymaps.Placemark(
       [52.222758, 104.326591],
       {},
       {
         iconLayout: 'default#image',
-        // Своё изображение иконки метки.
         iconImageHref: iconMartiniMap,
-        // Размеры метки.
         iconImageSize: [40, 40],
+        iconImageOffset: [-20, -20],
       },
     )
 

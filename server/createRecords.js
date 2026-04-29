@@ -25,7 +25,7 @@ const initRecords = async () => {
     const payload = {
       ...guest,
       uuid: uuidv4(),
-      hasAnswered: false,
+      hasAnswered: true,
       timeAnswered: '',
     }
 

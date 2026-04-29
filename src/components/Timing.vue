@@ -32,7 +32,7 @@
 const timing = [
   {
     time: '17:30',
-    name: 'Сбор гостей',
+    name: 'Сбор Гостей',
   },
 
   {
@@ -47,7 +47,7 @@ const timing = [
 
   {
     time: '02:00',
-    name: 'After party ;)',
+    name: 'After Party ;)',
   },
 ]
 
