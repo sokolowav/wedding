@@ -3,9 +3,8 @@ const router = express.Router()
 const Record = require('../models/Record')
 const { v4: uuidv4 } = require('uuid')
 
-const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '-1003889803653'
-const TELEGRAM_BOT_TOKEN =
-  process.env.TELEGRAM_BOT_TOKEN || '8690909452:AAFLE5hVPdSn5Vd3yQoxsVzR2-MTKjUWxKI'
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
 
 const formatBoolean = (value) => {
   if (value === true) return 'Да'

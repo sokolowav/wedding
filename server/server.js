@@ -3,12 +3,16 @@ const mongoose = require('mongoose')
 const path = require('path')
 const initRecords = require('./createRecords')
 
-const app = express()
+require('dotenv').config()
 
-app.set('port', 8080)
+const app = express()
+const port = Number(process.env.PORT) || 443
+const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/guests'
+
+app.set('port', port)
 
 mongoose
-  .connect('mongodb://localhost:27017/guests')
+  .connect(mongoUri)
   .then((db) => console.log('База данных подключена OK'))
   .catch((err) => console.error(err))
 
