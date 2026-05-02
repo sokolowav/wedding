@@ -5,7 +5,8 @@ export const useFetch = () => {
     },
   }
 
-  const url = 'http://wwww.mariyavladimir.ru/api/records'
+  /** Same-origin: работает на проде (HTTPS) и не ловит mixed content */
+  const url = '/api/records'
 
   return {
     get(id) {
