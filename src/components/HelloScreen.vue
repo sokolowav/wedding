@@ -67,6 +67,7 @@ const isLastName = (index: number) => {
 
 .image-1 {
   height: 47vh;
+  min-height: 280px;
   margin-top: 2rem;
 }
 
