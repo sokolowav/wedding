@@ -1,5 +1,12 @@
-import { format } from 'date-fns'
+import { format, isValid } from 'date-fns'
 
 export const getTime = (date) => {
-  return format(new Date(date), 'dd.MM.yyyy HH:ss')
+  if (date == null || date === '') return '—'
+  try {
+    const d = date instanceof Date ? date : new Date(date)
+    if (!isValid(d)) return '—'
+    return format(d, 'dd.MM.yyyy HH:mm')
+  } catch {
+    return '—'
+  }
 }

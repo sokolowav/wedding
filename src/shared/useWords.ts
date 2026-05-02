@@ -29,5 +29,6 @@ const wordsMap: Object = {
 }
 
 export const useWords = (gender: string = sexes[0]): IDictionary => {
-  return wordsMap[gender]
+  const key = sexes.includes(gender) ? gender : sexes[0]
+  return wordsMap[key] as IDictionary
 }

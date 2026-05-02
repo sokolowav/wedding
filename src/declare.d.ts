@@ -6,6 +6,12 @@ declare module '*.svg' {
   export default filePath
 }
 
+declare module '*.png' {
+  const filePath: string
+
+  export default filePath
+}
+
 declare module './shared/useFetch'
 declare module './shared/useWords'
 

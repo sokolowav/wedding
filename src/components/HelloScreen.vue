@@ -1,7 +1,13 @@
 <template>
   <div class="section hello-screen">
     <div class="image-wrapper">
-      <img class="image-1" src="../images/2.png" alt="pic" />
+      <img
+        class="image-1"
+        :src="heroScreenImageUrl"
+        alt=""
+        fetchpriority="high"
+        decoding="async"
+      />
     </div>
     <div class="names">
       <template v-for="(name, i) in names" :key="name">
@@ -38,6 +44,7 @@
 <script setup lang="ts">
 import { format } from 'date-fns'
 import { ref, Ref } from 'vue'
+import heroScreenImageUrl from '../images/2.png'
 
 const names: Ref<string[]> = ref(['Мария', 'Владимир'])
 

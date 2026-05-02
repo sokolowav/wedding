@@ -54,8 +54,8 @@
 
       <div class="guest-list mb-4">
         <div
-          v-for="guest in guests"
-          :key="guest.uuid"
+          v-for="(guest, idx) in guests"
+          :key="guest.uuid || guest._id || idx"
           class="guest-list-item mb-4"
         >
           <div class="guest-list-item__row-name">
@@ -93,9 +93,9 @@
           <button
             class="btn"
             @click="onClickDeleteBtn(guest)"
-            :disabled="isLoading"
+            :disabled="isLoadingAdmin"
           >
-            <span class="btn-text" :class="{ visible: !isLoading }"
+            <span class="btn-text" :class="{ visible: !isLoadingAdmin }"
               >Удалить</span
             >
           </button>
@@ -131,6 +131,16 @@
         'fade-out-ended': fadeOutEnded,
       }"
     >
+      <!-- грузим hero ещё на прелоадере, чтобы после Lottie картинка была в кэше -->
+      <img
+        class="preloader-hero-prefetch"
+        :src="heroScreenImageUrl"
+        alt=""
+        width="1"
+        height="1"
+        fetchpriority="high"
+        decoding="async"
+      />
       <LottieAnimation
         :animationData="animationJSON"
         :height="400"
@@ -162,6 +172,7 @@ import Colors from './components/Colors.vue'
 import Map from './components/Map.vue'
 import Form from './components/Form.vue'
 import animationJSON from './images/animation.json'
+import heroScreenImageUrl from './images/2.png'
 import AOS from 'aos'
 
 import { ref, Ref, computed, onMounted } from 'vue'
@@ -272,20 +283,20 @@ const onCompleteAnimation = () => {
 }
 
 const onClickGetAllBtn = async () => {
-  isLoading.value = true
+  isLoadingAdmin.value = true
 
   try {
     const response = await request.get()
-    guests.value = response
+    guests.value = Array.isArray(response) ? response : []
   } catch (error) {
-    throw error
+    console.error(error)
   } finally {
-    isLoading.value = false
+    isLoadingAdmin.value = false
   }
 }
 
 const onClickCreateBtn = async () => {
-  isLoading.value = true
+  isLoadingAdmin.value = true
 
   try {
     const response = await request.post(form.value)
@@ -294,9 +305,9 @@ const onClickCreateBtn = async () => {
       await onClickGetAllBtn()
     }
   } catch (error) {
-    throw error
+    console.error(error)
   } finally {
-    isLoading.value = false
+    isLoadingAdmin.value = false
   }
 }
 
@@ -311,7 +322,7 @@ const onClickDeleteBtn = async (guest) => {
 }
 
 const onClickRemoveBtn = async (guest) => {
-  isLoading.value = true
+  isLoadingAdmin.value = true
 
   try {
     const response = await request.delete(guest.uuid)
@@ -320,9 +331,9 @@ const onClickRemoveBtn = async (guest) => {
       await onClickGetAllBtn()
     }
   } catch (error) {
-    throw error
+    console.error(error)
   } finally {
-    isLoading.value = false
+    isLoadingAdmin.value = false
   }
 }
 
@@ -373,6 +384,19 @@ onMounted(() => {
 
 .fade-out-ended {
   display: none;
+}
+
+.preloader-hero-prefetch {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  pointer-events: none;
 }
 
 hr {
