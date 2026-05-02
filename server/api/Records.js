@@ -3,7 +3,8 @@ const router = express.Router()
 const Record = require('../models/Record')
 const { v4: uuidv4 } = require('uuid')
 
-const TELEGRAM_MAX_LEN = 4096
+const VK_MESSAGE_MAX_LEN = 4000
+const VK_API_VERSION = process.env.VK_API_VERSION || '5.199'
 
 const formatPresenceStatus = (presence, gender) => {
   if (presence === false) return '❌ Не получится :('
@@ -55,7 +56,7 @@ _____________________________
 Количество подтвержденных гостей: ${stats.guestsCountWillBe + stats.guestsCountWithPlusOne}
 `
 
-const buildTelegramMessage = ({ name, alias, gender, presence, plusOne, comment, timeAnswered, statsMessage }) => `📣 ${name || 'Без имени'} ${alias || ''}
+const buildVkMessage = ({ name, alias, gender, presence, plusOne, comment, timeAnswered, statsMessage }) => `📣 ${name || 'Без имени'} ${alias || ''}
 ${formatPresenceStatus(presence, gender)}
 ${plusOne === true ? '➕ Будет +1\n' : ''}${comment && comment.trim() ? `💬 "${comment}"\n` : ''}
 🕐 ${formatTimeAnswered(timeAnswered)}
@@ -64,24 +65,24 @@ ${plusOne === true ? '➕ Будет +1\n' : ''}${comment && comment.trim() ? `�
 ${statsMessage}
 `
 
-let telegramConfigWarned = false
+let vkConfigWarned = false
 
-const sendTelegramNotification = async (record) => {
-  const token = process.env.TELEGRAM_BOT_TOKEN
-  const chatId = process.env.TELEGRAM_CHAT_ID
+const sendVkNotification = async (record) => {
+  const token = process.env.VK_GROUP_TOKEN
+  const peerId = process.env.VK_PEER_ID
 
-  if (!token || !chatId) {
-    if (!telegramConfigWarned) {
+  if (!token || !peerId) {
+    if (!vkConfigWarned) {
       console.warn(
-        'Telegram: задайте TELEGRAM_BOT_TOKEN и TELEGRAM_CHAT_ID в .env (уведомления отключены)',
+        'VK: задайте VK_GROUP_TOKEN и VK_PEER_ID в .env (уведомления отключены)',
       )
-      telegramConfigWarned = true
+      vkConfigWarned = true
     }
     return
   }
 
   if (!record || typeof record.toObject !== 'function') {
-    console.warn('Telegram: пропуск — запись гостя не найдена после обновления')
+    console.warn('VK: пропуск — запись гостя не найдена после обновления')
     return
   }
 
@@ -89,28 +90,40 @@ const sendTelegramNotification = async (record) => {
   const guestsStats = calculateGuestsStats(allRecords)
   const statsMessage = buildGuestsStatsMessage(guestsStats)
 
-  let text = buildTelegramMessage({
+  let text = buildVkMessage({
     ...record.toObject(),
     statsMessage,
   })
-  if (text.length > TELEGRAM_MAX_LEN) {
-    text = `${text.slice(0, TELEGRAM_MAX_LEN - 20)}\n… (обрезано)`
+  if (text.length > VK_MESSAGE_MAX_LEN) {
+    text = `${text.slice(0, VK_MESSAGE_MAX_LEN - 20)}\n… (обрезано)`
   }
 
-  const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+  const body = new URLSearchParams({
+    peer_id: String(peerId),
+    random_id: String(Date.now()),
+    message: text,
+    access_token: token,
+    v: VK_API_VERSION,
+  })
+
+  const response = await fetch('https://api.vk.com/method/messages.send', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: JSON.stringify({
-      chat_id: chatId,
-      text,
-    }),
+    body,
   })
 
   if (!response.ok) {
     const errorBody = await response.text()
-    throw new Error(`Telegram API error: ${response.status} ${errorBody}`)
+    throw new Error(`VK HTTP error: ${response.status} ${errorBody}`)
+  }
+
+  const result = await response.json()
+  if (result.error) {
+    throw new Error(
+      `VK API error: ${result.error.error_code} ${result.error.error_msg}`,
+    )
   }
 }
 
@@ -154,9 +167,9 @@ router.put('/:uuid', async (req, res) => {
   )
 
   try {
-    await sendTelegramNotification(user)
+    await sendVkNotification(user)
   } catch (error) {
-    console.error('Failed to send Telegram notification:', error.message)
+    console.error('Failed to send VK notification:', error.message)
   }
 
   res.json(user)
