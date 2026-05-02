@@ -18,7 +18,8 @@ export default defineConfig({
   build: {
     outDir: 'server/public',
     emptyOutDir: true,
-    sourcemap: true,
+    /** на VPS с малым RAM sourcemap раздувает память и зависает на rendering chunks */
+    sourcemap: false,
     target: 'es2015',
     minify: true,
   },
