@@ -79,6 +79,28 @@ ${statsMessage}
 
 let vkConfigWarned = false
 
+const normalizeComment = (value) => (typeof value === 'string' ? value.trim() : '')
+
+const normalizePlusOne = (presence, plusOne) =>
+  presence === true && plusOne === true
+
+const hasAnswerChanged = (currentRecord, nextPayload) => {
+  if (!currentRecord) return true
+
+  const currentPresence = currentRecord.presence
+  const nextPresence = nextPayload.presence
+  const currentPlusOne = normalizePlusOne(currentPresence, currentRecord.plusOne)
+  const nextPlusOne = normalizePlusOne(nextPresence, nextPayload.plusOne)
+  const currentComment = normalizeComment(currentRecord.comment)
+  const nextComment = normalizeComment(nextPayload.comment)
+
+  return (
+    currentPresence !== nextPresence ||
+    currentPlusOne !== nextPlusOne ||
+    currentComment !== nextComment
+  )
+}
+
 const sendVkNotification = async (record) => {
   const token = process.env.VK_GROUP_TOKEN
   const peerId = process.env.VK_PEER_ID
@@ -164,12 +186,25 @@ router.get('/:uuid', async (req, res) => {
 })
 
 router.put('/:uuid', async (req, res) => {
+  const currentUser = await Record.findOne({ uuid: req.params.uuid })
+
+  if (!currentUser) {
+    return res.status(404).json({ state: 'not_found' })
+  }
+
   const payload = {
     ...req.body,
     plusOne: req.body.presence === true && req.body.plusOne === true,
     hasAnswered: true,
-    timeAnswered: new Date(),
+    timeAnswered: currentUser.timeAnswered,
   }
+
+  const answerChanged = hasAnswerChanged(currentUser, payload)
+
+  if (answerChanged) {
+    payload.timeAnswered = new Date()
+  }
+
   const user = await Record.findOneAndUpdate(
     {
       uuid: req.params.uuid,
@@ -178,10 +213,14 @@ router.put('/:uuid', async (req, res) => {
     { new: true },
   )
 
-  try {
-    await sendVkNotification(user)
-  } catch (error) {
-    console.error('Failed to send VK notification:', error.message)
+  if (answerChanged) {
+    try {
+      await sendVkNotification(user)
+    } catch (error) {
+      console.error('Failed to send VK notification:', error.message)
+    }
+  } else {
+    console.log(`VK notification skipped for ${req.params.uuid}: answer has not changed`)
   }
 
   res.json(user)
