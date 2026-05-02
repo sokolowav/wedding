@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require('uuid')
 
 const VK_MESSAGE_MAX_LEN = 4000
 const VK_API_VERSION = process.env.VK_API_VERSION || '5.199'
+const IRKUTSK_TIMEZONE = 'Asia/Irkutsk'
 
 const formatPresenceStatus = (presence, gender) => {
   if (presence === false) return '❌ Не получится :('
@@ -15,7 +16,18 @@ const formatPresenceStatus = (presence, gender) => {
 const formatTimeAnswered = (value) => {
   if (!value) return 'Время не указано'
   const date = new Date(value)
-  return Number.isNaN(date.getTime()) ? 'Время не указано' : date.toLocaleString('ru-RU')
+  return Number.isNaN(date.getTime())
+    ? 'Время не указано'
+    : new Intl.DateTimeFormat('ru-RU', {
+        timeZone: IRKUTSK_TIMEZONE,
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      }).format(date)
 }
 
 const calculateGuestsStats = (records) => {

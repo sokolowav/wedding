@@ -116,7 +116,7 @@ const presenceOptions = [
   },
   {
     id: 2,
-    name: 'К сожалению, не получится.',
+    name: 'К сожалению, нет.',
     value: false,
   },
 ]

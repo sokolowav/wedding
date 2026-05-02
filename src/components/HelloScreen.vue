@@ -42,15 +42,20 @@
 </template>
 
 <script setup lang="ts">
-import { format } from 'date-fns'
 import { ref, Ref } from 'vue'
 import heroScreenImageUrl from '../images/2.webp'
 
 const names: Ref<string[]> = ref(['Мария', 'Владимир'])
-
-const date = new Date('2026-06-16T17:30:00')
-const dateFormated = format(date, 'dd.MM.yyyy')
-const timeRemaining = date.getTime() - new Date().getTime()
+const IRKUTSK_TIMEZONE = 'Asia/Irkutsk'
+// 16.06.2026 17:30 по Иркутску = 16.06.2026 09:30 UTC
+const weddingTimestampUtcMs = Date.UTC(2026, 5, 16, 9, 30, 0)
+const dateFormated = new Intl.DateTimeFormat('ru-RU', {
+  timeZone: IRKUTSK_TIMEZONE,
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+}).format(new Date(weddingTimestampUtcMs))
+const timeRemaining = Math.max(weddingTimestampUtcMs - Date.now(), 0)
 
 const isLastName = (index: number) => {
   return index === names.value.length - 1
