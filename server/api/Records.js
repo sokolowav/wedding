@@ -3,14 +3,7 @@ const router = express.Router()
 const Record = require('../models/Record')
 const { v4: uuidv4 } = require('uuid')
 
-const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID
-const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
-
-const formatBoolean = (value) => {
-  if (value === true) return 'Да'
-  if (value === false) return 'Нет'
-  return 'Не указано'
-}
+const TELEGRAM_MAX_LEN = 4096
 
 const formatPresenceStatus = (presence, gender) => {
   if (presence === false) return '❌ Не получится :('
@@ -71,23 +64,47 @@ ${plusOne === true ? '➕ Будет +1\n' : ''}${comment && comment.trim() ? `�
 ${statsMessage}
 `
 
+let telegramConfigWarned = false
+
 const sendTelegramNotification = async (record) => {
-  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return
+  const token = process.env.TELEGRAM_BOT_TOKEN
+  const chatId = process.env.TELEGRAM_CHAT_ID
+
+  if (!token || !chatId) {
+    if (!telegramConfigWarned) {
+      console.warn(
+        'Telegram: задайте TELEGRAM_BOT_TOKEN и TELEGRAM_CHAT_ID в .env (уведомления отключены)',
+      )
+      telegramConfigWarned = true
+    }
+    return
+  }
+
+  if (!record || typeof record.toObject !== 'function') {
+    console.warn('Telegram: пропуск — запись гостя не найдена после обновления')
+    return
+  }
+
   const allRecords = await Record.find()
   const guestsStats = calculateGuestsStats(allRecords)
   const statsMessage = buildGuestsStatsMessage(guestsStats)
 
-  const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+  let text = buildTelegramMessage({
+    ...record.toObject(),
+    statsMessage,
+  })
+  if (text.length > TELEGRAM_MAX_LEN) {
+    text = `${text.slice(0, TELEGRAM_MAX_LEN - 20)}\n… (обрезано)`
+  }
+
+  const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      chat_id: TELEGRAM_CHAT_ID,
-      text: buildTelegramMessage({
-        ...record.toObject(),
-        statsMessage,
-      }),
+      chat_id: chatId,
+      text,
     }),
   })
 
