@@ -12,6 +12,12 @@ declare module '*.png' {
   export default filePath
 }
 
+declare module '*.webp' {
+  const filePath: string
+
+  export default filePath
+}
+
 declare module './shared/useFetch'
 declare module './shared/useWords'
 

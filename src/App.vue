@@ -172,7 +172,7 @@ import Colors from './components/Colors.vue'
 import Map from './components/Map.vue'
 import Form from './components/Form.vue'
 import animationJSON from './images/animation.json'
-import heroScreenImageUrl from './images/2.png'
+import heroScreenImageUrl from './images/2.webp'
 import AOS from 'aos'
 
 import { ref, Ref, computed, onMounted } from 'vue'

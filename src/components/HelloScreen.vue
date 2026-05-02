@@ -44,7 +44,7 @@
 <script setup lang="ts">
 import { format } from 'date-fns'
 import { ref, Ref } from 'vue'
-import heroScreenImageUrl from '../images/2.png'
+import heroScreenImageUrl from '../images/2.webp'
 
 const names: Ref<string[]> = ref(['Мария', 'Владимир'])
 
